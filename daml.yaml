@@ -1,4 +1,4 @@
-sdk-version: 0.13.55
+sdk-version: 1.3.0
 name: create-daml-app
 version: 0.1.0
 source: daml
@@ -13,3 +13,4 @@ dependencies:
 sandbox-options:
 - --wall-clock-time
 - --ledgerid=create-daml-app-sandbox
+start-navigator: false

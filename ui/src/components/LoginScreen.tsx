@@ -1,9 +1,12 @@
+// Copyright (c) 2020 Digital Asset (Switzerland) GmbH and/or its affiliates. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback } from 'react'
 import { Button, Form, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import Credentials, { computeCredentials } from '../Credentials';
 import Ledger from '@daml/ledger';
-import { User } from '@daml-ts/create-daml-app-0.1.0/lib/User';
-import { DeploymentMode, deploymentMode, ledgerId, httpBaseUrl, wsBaseUrl } from '../config';
+import { User } from '@daml.js/create-daml-app';
+import { DeploymentMode, deploymentMode, ledgerId, httpBaseUrl} from '../config';
 import { useEffect } from 'react';
 
 type Props = {
@@ -18,11 +21,11 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
 
   const login = useCallback(async (credentials: Credentials) => {
     try {
-      const ledger = new Ledger({token: credentials.token, httpBaseUrl, wsBaseUrl});
-      let userContract = await ledger.lookupByKey(User, credentials.party);
+      const ledger = new Ledger({token: credentials.token, httpBaseUrl});
+      let userContract = await ledger.fetchByKey(User.User, credentials.party);
       if (userContract === null) {
         const user = {username: credentials.party, following: []};
-        userContract = await ledger.create(User, user);
+        userContract = await ledger.create(User.User, user);
       }
       onLogin(credentials);
     } catch(error) {
@@ -78,6 +81,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
           <Segment>
             {deploymentMode !== DeploymentMode.PROD_DABL
             ? <>
+                {/* FORM_BEGIN */}
                 <Form.Input
                   fluid
                   icon='user'
@@ -94,6 +98,7 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
                   onClick={handleLogin}>
                   Log in
                 </Button>
+                {/* FORM_END */}
               </>
             : <Button primary fluid onClick={handleDablLogin}>
                 Log in with DABL

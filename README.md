@@ -1,9 +1,3 @@
-# Archived
-
-This repository has been archived and will not be maintained anymore. The content lives on as a [template in the main DAML SDK repo](https://github.com/digital-asset/daml/tree/master/templates/create-daml-app). See [the documentation](https://docs.daml.com/getting-started/index.html) for the latest instructions.
-
-**DISCLAIMER: This is a work in progress!**
-
 [![DAML logo](https://daml.com/static/images/logo.png)](https://www.daml.com)
 
 [![Download](https://img.shields.io/github/release/digital-asset/daml.svg?label=Download)](https://docs.daml.com/getting-started/installation.html)
@@ -30,42 +24,34 @@ replaceable.
 ## Getting started
 
 Before you can run the application, you need to install the
-[DAML SDK](https://docs.daml.com/getting-started/installation.html) and [yarn](https://yarnpkg.com/en/docs/install)
-package manager for JavaScript.
+[yarn](https://yarnpkg.com/en/docs/install) package manager for JavaScript.
 
-You can make a copy of this project either by clicking the
-"Use this template" button above or by cloning this repository directly via
-```
-git clone https://github.com/digital-asset/create-daml-app.git
-```
-
-Once you have copy of the project, there are two steps to build it.
+There are two steps to build the project.
 First, we need to generate TypeScript code bindings for the compiled DAML model.
 At the root of the repository, run
 ```
 daml build
-daml codegen ts .daml/dist/create-daml-app-0.1.0.dar -o daml-ts -p package.json
+daml codegen js .daml/dist/create-daml-app-0.1.0.dar -o daml.js
 ```
-The latter command generates TypeScript packages in the `daml-ts` directory and
-updates the `package.json` with the new dependencies.
+The latter command generates TypeScript packages in the `daml.js` directory.
 
-Next, install all dependencies and build the app by running
+Next, navigate to the `ui` directory and install the dependencies and build the app by running
 ```
+cd ui
 yarn install
-yarn workspaces run build
+yarn build
 ```
+The last step is not absolutely necessary but useful to check that the app compiles.
 
 To start the application, there are again two steps.
-First start a DAML ledger using
+In one terminal in the root directory, start a DAML ledger using
 ```
-daml start --start-navigator=no
+daml start
 ```
-(We're not using DAML Navigator here, hence we don't start it.)
 This must continue running to serve ledger requests.
 
-Then in another terminal window, start the UI server via
+Then in a second terminal window in the `ui` directory, start the UI server via
 ```
-cd ui/
 yarn start
 ```
 This should open a browser window with a login screen.
@@ -101,9 +87,8 @@ DAR `create-daml-app.dar` you have just created.
 To upload the UI, create a ZIP file containing all your UI assets by executing
 ```
 daml build
-daml codegen ts .daml/dist/create-daml-app-0.1.0.dar -o daml-ts/src
-yarn workspaces run build
-(cd ui && zip -r ../create-daml-app-ui.zip build)
+daml codegen js .daml/dist/create-daml-app-0.1.0.dar -o daml.js
+(cd ui && yarn build && zip -r ../create-daml-app-ui.zip build)
 ```
 at the root of the repository. Afterwards, select the "UI Assets" tab of your
 chosen ledger on the DABL website, upload the ZIP file
@@ -120,7 +105,7 @@ Regardless of which direction you pick, the following files will be the most
 interesting ones to familiarize yourself with:
 
 - [`daml/User.daml`](daml/User.daml): the DAML model of the social network
-- [`daml-ts/src/create-daml-app-0.1.0/User.ts`](src/daml/User.ts) (once you've generated it):
+- `daml.js/create-daml-app-0.1.0/src/User.ts` (once you've generated it):
   a reflection of the types contained in the DAML model in TypeScript
 - [`ui/src/components/MainView.tsx`](ui/src/components/MainView.tsx):
   a React component using the HTTP Ledger API and rendering the main features

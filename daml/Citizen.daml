@@ -1,0 +1,39 @@
+module Citizen where
+
+-- MAIN_TEMPLATE_BEGIN
+template Citizen with
+    anEntity: Party
+    firstName : Text
+    lastName : Text
+    id : Int
+    -- reasons to forbid leaving the country
+    hasCovid : Bool
+    hasAlimonyIssues : Bool
+  where
+    signatory anEntity
+-- MAIN_TEMPLATE_END
+
+    --key anEntity: Party
+    --maintainer key
+
+    -- create the citizen
+
+    -- create the citizen END
+
+    -- Set covid state
+    choice SetCovidState: ContractId Citizen with
+        covidDetected: Bool
+      controller anEntity
+      do
+        assertMsg "No change required" (covidDetected == hasCovid)
+        create this with hasCovid = covidDetected
+    -- Set covid state END
+
+    -- Set alimony state
+    choice SetAlimonyState: ContractId Citizen with
+        alimonyIssues: Bool
+      controller anEntity
+      do
+        assertMsg "No change required" (alimonyIssues == hasAlimonyIssues)
+        create this with hasAlimonyIssues = alimonyIssues
+    -- Set alimony state END

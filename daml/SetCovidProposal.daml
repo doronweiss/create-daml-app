@@ -1,0 +1,14 @@
+module SetCovidProposal where
+import Citizen
+import Authority
+
+-- MAIN_TEMPLATE_BEGIN
+template SetCovidProposal with
+    target     : Citizen
+    authority  : Authority
+    covid      : Bool
+  where
+    signatory authority
+
+    controller authority can SetCovidProposal_Accept  :ContractId Citizen  do
+      create target with hasCovid = covid

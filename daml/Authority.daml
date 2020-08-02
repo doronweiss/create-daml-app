@@ -1,0 +1,11 @@
+module Authority where
+
+data GovOffice = InternalAffairs | Wellfare | Health
+  deriving (Eq, Show, Enum)
+
+template Authority with
+    owner : Party
+    name : Text
+    office : GovOffice
+  where
+    signatory owner

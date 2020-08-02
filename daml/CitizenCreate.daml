@@ -1,0 +1,23 @@
+module CitizenCreate where
+import Citizen
+
+template CitizenCreate with
+    owner : Party
+  where
+    signatory owner
+
+
+    choice CreateCitizen: ContractId Citizen with
+        anEntity: Party
+        firstName : Text
+        lastName : Text
+        id : Int
+      controller owner
+      do
+        create Citizen with 
+          anEntity=anEntity
+          firstName=firstName
+          lastName=lastName
+          id=id
+          hasCovid=False
+          hasAlimonyIssues=False
