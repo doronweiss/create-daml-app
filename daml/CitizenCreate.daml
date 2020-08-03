@@ -7,7 +7,7 @@ template CitizenCreate with
     signatory owner
 
 
-    choice CreateCitizen: ContractId Citizen with
+    choice CreateCitizenDo: ContractId Citizen with
         anEntity: Party
         firstName : Text
         lastName : Text
@@ -21,3 +21,30 @@ template CitizenCreate with
           id=id
           hasCovid=False
           hasAlimonyIssues=False
+
+ctTest = scenario do
+  alice <- getParty "Alice"
+  do
+    -- let cc = create CitizenCreate with owner = alice  
+    submit alice do
+      create Citizen with
+        anEntity = alice
+        firstName = "Bob"
+        lastName = "lastenton"
+        id = 5550001
+        hasCovid = False
+        hasAlimonyIssues = False
+
+tTest2 = scenario do
+  alice <- getParty "Alice"
+  do
+    -- let cc = create CitizenCreate with owner = alice  
+    submit alice do
+      cc <- create CitizenCreate with
+        owner = alice
+      exercise cc CreateCitizenDo with
+        anEntity = alice
+        firstName = "Bob"
+        lastName = "lastenton"
+        id = 5550001
+      

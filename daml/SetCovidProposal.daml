@@ -8,7 +8,10 @@ template SetCovidProposal with
     authority  : Authority
     covid      : Bool
   where
-    signatory authority
+    signatory authority.owner
 
-    controller authority can SetCovidProposal_Accept  :ContractId Citizen  do
-      create target with hasCovid = covid
+    controller authority.owner can 
+      SetCovidProposal_Accept  
+        : ContractId Citizen
+        do
+          create target with hasCovid = covid
