@@ -1,7 +1,7 @@
-module CitizenCreate where
+module CitizenCreator where
 import Citizen
 
-template CitizenCreate with
+template CitizenCreator with
     owner : Party
   where
     signatory owner
@@ -25,7 +25,7 @@ template CitizenCreate with
 ctTest = scenario do
   alice <- getParty "Alice"
   do
-    -- let cc = create CitizenCreate with owner = alice  
+    -- let cc = create CitizenCreator with owner = alice  
     submit alice do
       create Citizen with
         anEntity = alice
@@ -38,9 +38,9 @@ ctTest = scenario do
 tTest2 = scenario do
   alice <- getParty "Alice"
   do
-    -- let cc = create CitizenCreate with owner = alice  
+    -- let cc = create CitizenCreator with owner = alice  
     submit alice do
-      cc <- create CitizenCreate with
+      cc <- create CitizenCreator with
         owner = alice
       exercise cc CreateCitizenDo with
         anEntity = alice
@@ -51,9 +51,9 @@ tTest2 = scenario do
 tTest21 = scenario do
   alice <- getParty "Alice"
   do
-    -- let cc = create CitizenCreate with owner = alice  
+    -- let cc = create CitizenCreator with owner = alice  
     submit alice do
-      let cc = create CitizenCreate with   owner = alice
+      let cc = create CitizenCreator with   owner = alice
         in exercise cc CreateCitizenDo with
           anEntity = alice
           firstName = "Bob"
@@ -63,15 +63,14 @@ tTest21 = scenario do
 tTest3 = scenario do
   alice <- getParty "Alice"
   do
-    -- let cc = create CitizenCreate with owner = alice  
+    -- let cc = create CitizenCreator with owner = alice  
     submit alice do
-      let cc = create CitizenCreate with
-          owner = alice
-        submit alice do
-          let ctz = exercise cc CreateCitizenDo with
+      let cc = create CitizenCreator with
+            owner = alice
+          ctz = exercise cc CreateCitizenDo with
             anEntity = alice
             firstName = "Bob"
             lastName = "lastenton"
             id = 5550001
-        in exercise ctz SetCovidState with
+      in exercise ctz SetCovidState with
         covidDetected = True
