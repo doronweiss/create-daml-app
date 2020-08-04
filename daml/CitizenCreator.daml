@@ -60,31 +60,10 @@ tTest2 = scenario do
         anEntity = bob
         firstName = "Bob"
         lastName = "rosen"
-        id = 5550002
-      
--- tTest21 = scenario do
---   alice <- getParty "Alice"
---   do
---     -- let cc = create CitizenCreator with owner = alice  
---     submit alice do
---       let cc = create CitizenCreator with   owner = alice
---         in exercise cc CreateCitizenDo with
---           anEntity = alice
---           firstName = "Bob"
---           lastName = "lastenton"
---           id = 5550001
-      
--- tTest3 = scenario do
---   alice <- getParty "Alice"
---   do
---     -- let cc = create CitizenCreator with owner = alice  
---     submit alice do
---       let cc = create CitizenCreator with
---             owner = alice
---           ctz = exercise cc CreateCitizenDo with
---             anEntity = alice
---             firstName = "Bob"
---             lastName = "lastenton"
---             id = 5550001
---       in exercise ctz SetCovidState with
---         covidDetected = True
+        id = 5550002  
+    let citizensQ = query @Citizen bob
+        ctid = filter (\(_cid, c) -> c.id == 5550001) citizensQ
+        do
+          submit bob do
+            exercise ctid SetCovidState with
+              covidDetected = True

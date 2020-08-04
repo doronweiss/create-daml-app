@@ -1,0 +1,26 @@
+-- tTest21 = scenario do
+--   alice <- getParty "Alice"
+--   do
+--     -- let cc = create CitizenCreator with owner = alice  
+--     submit alice do
+--       let cc = create CitizenCreator with   owner = alice
+--         in exercise cc CreateCitizenDo with
+--           anEntity = alice
+--           firstName = "Bob"
+--           lastName = "lastenton"
+--           id = 5550001
+      
+-- tTest3 = scenario do
+--   alice <- getParty "Alice"
+--   do
+--     -- let cc = create CitizenCreator with owner = alice  
+--     submit alice do
+--       let cc = create CitizenCreator with
+--             owner = alice
+--           ctz = exercise cc CreateCitizenDo with
+--             anEntity = alice
+--             firstName = "Bob"
+--             lastName = "lastenton"
+--             id = 5550001
+--       in exercise ctz SetCovidState with
+--         covidDetected = True
