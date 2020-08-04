@@ -7,7 +7,7 @@ template CitizenCreator with
     signatory owner
 
 
-    choice CreateCitizenDo: ContractId Citizen with
+    nonconsuming choice CreateCitizenDo: ContractId Citizen with
         anEntity: Party
         firstName : Text
         lastName : Text
@@ -37,6 +37,7 @@ ctTest = scenario do
 
 tTest2 = scenario do
   alice <- getParty "Alice"
+  bob <- getParty "Bob"
   do
     -- let cc = create CitizenCreator with owner = alice  
     submit alice do
@@ -47,30 +48,43 @@ tTest2 = scenario do
         firstName = "Bob"
         lastName = "lastenton"
         id = 5550001
+      exercise cc CreateCitizenDo with
+        anEntity = alice
+        firstName = "guy"
+        lastName = "rosenstein"
+        id = 5550003
+    submit bob do
+      cc <- create CitizenCreator with
+        owner = bob
+      exercise cc CreateCitizenDo with
+        anEntity = bob
+        firstName = "Bob"
+        lastName = "rosen"
+        id = 5550002
       
-tTest21 = scenario do
-  alice <- getParty "Alice"
-  do
-    -- let cc = create CitizenCreator with owner = alice  
-    submit alice do
-      let cc = create CitizenCreator with   owner = alice
-        in exercise cc CreateCitizenDo with
-          anEntity = alice
-          firstName = "Bob"
-          lastName = "lastenton"
-          id = 5550001
+-- tTest21 = scenario do
+--   alice <- getParty "Alice"
+--   do
+--     -- let cc = create CitizenCreator with owner = alice  
+--     submit alice do
+--       let cc = create CitizenCreator with   owner = alice
+--         in exercise cc CreateCitizenDo with
+--           anEntity = alice
+--           firstName = "Bob"
+--           lastName = "lastenton"
+--           id = 5550001
       
-tTest3 = scenario do
-  alice <- getParty "Alice"
-  do
-    -- let cc = create CitizenCreator with owner = alice  
-    submit alice do
-      let cc = create CitizenCreator with
-            owner = alice
-          ctz = exercise cc CreateCitizenDo with
-            anEntity = alice
-            firstName = "Bob"
-            lastName = "lastenton"
-            id = 5550001
-      in exercise ctz SetCovidState with
-        covidDetected = True
+-- tTest3 = scenario do
+--   alice <- getParty "Alice"
+--   do
+--     -- let cc = create CitizenCreator with owner = alice  
+--     submit alice do
+--       let cc = create CitizenCreator with
+--             owner = alice
+--           ctz = exercise cc CreateCitizenDo with
+--             anEntity = alice
+--             firstName = "Bob"
+--             lastName = "lastenton"
+--             id = 5550001
+--       in exercise ctz SetCovidState with
+--         covidDetected = True
