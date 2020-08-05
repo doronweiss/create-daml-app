@@ -16,16 +16,12 @@ template Citizen with
     --key anEntity: Party
     --maintainer key
 
-    -- create the citizen
-
-    -- create the citizen END
-
     -- Set covid state
     choice SetCovidState: ContractId Citizen with
         covidDetected: Bool
       controller anEntity
       do
-        assertMsg "No change required" (covidDetected == hasCovid)
+        assertMsg "No change required" (covidDetected /= hasCovid)
         create this with hasCovid = covidDetected
     -- Set covid state END
 
@@ -34,6 +30,23 @@ template Citizen with
         alimonyIssues: Bool
       controller anEntity
       do
-        assertMsg "No change required" (alimonyIssues == hasAlimonyIssues)
+        assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
         create this with hasAlimonyIssues = alimonyIssues
     -- Set alimony state END
+
+
+ctTest = scenario do
+  alice <- getParty "Alice"
+  do
+    submit alice do
+      cc <- create Citizen with
+        anEntity = alice
+        firstName = "Bob"
+        lastName = "lastenton"
+        id = 5550001
+        hasCovid = False
+        hasAlimonyIssues = False
+      cc1 <- exercise cc SetCovidState with
+        covidDetected = True
+      exercise cc1 SetAlimonyState with
+        alimonyIssues = True

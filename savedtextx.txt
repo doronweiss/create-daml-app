@@ -1,3 +1,36 @@
+tTest2 = scenario do
+  alice <- getParty "Alice"
+  bob <- getParty "Bob"
+  do
+    -- let cc = create CitizenCreator with owner = alice  
+    submit alice do
+      cc <- create CitizenCreator with
+        owner = alice
+      exercise cc CreateCitizenDo with
+        anEntity = alice
+        firstName = "Bob"
+        lastName = "lastenton"
+        id = 5550001
+      exercise cc CreateCitizenDo with
+        anEntity = alice
+        firstName = "guy"
+        lastName = "rosenstein"
+        id = 5550003
+    submit bob do
+      cc <- create CitizenCreator with
+        owner = bob
+      exercise cc CreateCitizenDo with
+        anEntity = bob
+        firstName = "Bob"
+        lastName = "rosen"
+        id = 5550002  
+    let citizensQ = query @Citizen bob
+        ctid = filter (\(_cid, c) -> c.id == 5550001) citizensQ
+        do
+          submit bob do
+            exercise ctid SetCovidState with
+              covidDetected = True
+              
 -- tTest21 = scenario do
 --   alice <- getParty "Alice"
 --   do
