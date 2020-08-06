@@ -1,9 +1,63 @@
 module Citizen where
+
+import Authority
 --import Daml.Script
+
+data CitizenName = CitizenName with 
+  firstName : Text
+  lastName : Text
+    deriving (Eq, Show)
+
+template CitizenHealth with
+    healthOffice : Party
+    id : Int
+    hasCovid : Bool
+  where
+    signatory healthOffice
+    key (healthOffice, id) : (Party : Int)
+    maintainer key._1
+
+    choice SetCovidState: ContractId Citizen with
+        covidDetected: Bool
+      controller healthOffice
+      do
+        assertMsg "No change required" (covidDetected /= hasCovid)
+        create this with hasCovid = covidDetected
+
+template CitizenWellfare with
+    wellfareOffice : Party
+    id : Int
+    hasAlimonyIssues : Bool
+  where
+    signatory wellfareOffice
+    key (wellfareOffice, id) : (Party : Int)
+    maintainer key._1
+    
+    choice SetAlimonyState: ContractId Citizen with
+        alimonyIssues: Bool
+        wellfareOfficeRoleCid : ContractId WellfareRole
+      controller wellfareOffice
+      do
+        wellfareRole <- fetch wellfareOfficeRoleCid
+        assert (wellfareRole.party == wellfareOffice)
+        
+        assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
+        create this with hasAlimonyIssues = alimonyIssues
+
+
+template CitizenRegistry with
+    internalAffairs : Party
+    healthOffice : Party
+    wellfareOffice : Party
+    citizens : [(Int, CitizenName)]
+  where
+    signatory internalAffairs
+    observer [healthOffice, wellfareOffice]
 
 -- MAIN_TEMPLATE_BEGIN
 template Citizen with
-    anEntity: Party
+    wellfareOffice : Party
+    healthOffice: Party
     firstName : Text
     lastName : Text
     id : Int
@@ -11,7 +65,7 @@ template Citizen with
     hasCovid : Bool
     hasAlimonyIssues : Bool
   where
-    signatory anEntity
+    signatory wellfareOffice, healthOffice
 -- MAIN_TEMPLATE_END
 
     --key anEntity: Party
@@ -20,7 +74,7 @@ template Citizen with
     -- Set covid state
     choice SetCovidState: ContractId Citizen with
         covidDetected: Bool
-      controller anEntity
+      controller healthOffice
       do
         assertMsg "No change required" (covidDetected /= hasCovid)
         create this with hasCovid = covidDetected
@@ -29,8 +83,12 @@ template Citizen with
     -- Set alimony state
     choice SetAlimonyState: ContractId Citizen with
         alimonyIssues: Bool
-      controller anEntity
+        wellfareOfficeRoleCid : ContractId WellfareRole
+      controller wellfareOffice
       do
+        wellfareRole <- fetch wellfareOfficeRoleCid
+        assert (wellfareRole.party == wellfareOffice)
+        
         assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
         create this with hasAlimonyIssues = alimonyIssues
     -- Set alimony state END

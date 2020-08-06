@@ -9,3 +9,36 @@ template Authority with
     office : GovOffice
   where
     signatory owner
+
+template WellfareRole with
+    wellfareOffice : Party
+    administrator : Party
+  where
+    signatory party, administrator
+  
+    choice OnboardEmployee : ContractId WellfareEmployeeRole with
+        employee : Party
+      controller     wellfareParty : Party
+        do
+          create WellfareEmployeeRole with ..
+        
+        
+template WellfareEmployeeRole with
+    employee : Party
+    wellfareOffice : Party
+    administrator : Party
+  where
+    signatory employee, wellfareOffice, administrator
+
+    choice SetAlimonyState : ContractId Citizen with
+        alimonyIssues: Bool
+        wellfareOfficeRoleCid : ContractId WellfareRole
+        citizenCid : ContractId Citizen
+      controller employee
+        do
+          exercise citizenCid SetAlimonyState with ..
+            
+
+          
+
+

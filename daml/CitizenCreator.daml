@@ -1,19 +1,32 @@
 module CitizenCreator where
 import Citizen
+import Authority
 
-template CitizenCreator with
-    owner : Party
+template CitizenCreateProposal with
+    initiator : Party
+    initiatorRoleCid : ContractId HealthcareRole
+    approver: Party
+    firstName : Text
+    lastName : Text
+    id : Int
   where
-    signatory owner
+    signatory initiator
+    observer approver
 
-
-    nonconsuming choice CreateCitizenDo: ContractId Citizen with
-        anEntity: Party
-        firstName : Text
-        lastName : Text
-        id : Int
-      controller owner
+    choice CreateCitizenDo: ContractId Citizen with
+        approverRoleCid : ContractId WellfareRole
+      controller approver
       do
+        approverRoleContract <- fetch approverRoleCid
+        assert (rec.owner == owner)
+        assert (rec.owner == owner)
+        assert (rec.owner == owner)
+        
+        initiatorRoleContract <- fetch initiatorRoleCid
+        assert (rec.owner == owner)
+        assert (rec.owner == owner)
+        assert (rec.owner == owner)
+        
         create Citizen with 
           anEntity=anEntity
           firstName=firstName
