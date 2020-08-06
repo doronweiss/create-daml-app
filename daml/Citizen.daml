@@ -42,7 +42,7 @@ ctTest = scenario do
     submit alice do
       cc <- create Citizen with
         anEntity = alice
-        firstName = "Bob"
+        firstName = "משה"
         lastName = "lastenton"
         id = 5550001
         hasCovid = False
