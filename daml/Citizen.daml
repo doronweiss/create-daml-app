@@ -55,6 +55,7 @@ data CitizenName = CitizenName with
 
 -- MAIN_TEMPLATE_BEGIN
 template Citizen with
+    internalAffairsOffice : Party
     wellfareOffice : Party
     healthOffice: Party
     firstName : Text
@@ -64,7 +65,7 @@ template Citizen with
     hasCovid : Bool
     hasAlimonyIssues : Bool
   where
-    signatory wellfareOffice, healthOffice
+    signatory internalAffairsOffice
     -- Set covid state
     choice SetCovidState: ContractId Citizen with
         covidDetected: Bool
@@ -102,6 +103,4 @@ template Citizen with
 --       cc1 <- exercise cc SetCovidState with
 --         covidDetected = True
 --         caller = hhealthOffice
---       -- exercise cc1 SetAlimonyState with
---       --   alimonyIssues = True
  
