@@ -1,58 +1,57 @@
 module Citizen where
 
-import Authority
---import Daml.Script
+--import Authority
 
 data CitizenName = CitizenName with 
   firstName : Text
   lastName : Text
     deriving (Eq, Show)
 
-template CitizenHealth with
-    healthOffice : Party
-    id : Int
-    hasCovid : Bool
-  where
-    signatory healthOffice
-    key (healthOffice, id) : (Party : Int)
-    maintainer key._1
+-- template CitizenHealth with
+--     healthOffice : Party
+--     id : Int
+--     hasCovid : Bool
+--   where
+--     signatory healthOffice
+--     key (healthOffice, id) : (Party : Int)
+--     maintainer key._1
 
-    choice SetCovidState: ContractId Citizen with
-        covidDetected: Bool
-      controller healthOffice
-      do
-        assertMsg "No change required" (covidDetected /= hasCovid)
-        create this with hasCovid = covidDetected
+--     choice SetCovidState: ContractId Citizen with
+--         covidDetected: Bool
+--       controller healthOffice
+--       do
+--         assertMsg "No change required" (covidDetected /= hasCovid)
+--         create this with hasCovid = covidDetected
 
-template CitizenWellfare with
-    wellfareOffice : Party
-    id : Int
-    hasAlimonyIssues : Bool
-  where
-    signatory wellfareOffice
-    key (wellfareOffice, id) : (Party : Int)
-    maintainer key._1
+-- template CitizenWellfare with
+--     --wellfareOffice : Party
+--     id : Int
+--     hasAlimonyIssues : Bool
+--   where
+--     signatory wellfareOffice
+--     key (wellfareOffice, id) : (Party : Int)
+--     maintainer key._1
     
-    choice SetAlimonyState: ContractId Citizen with
-        alimonyIssues: Bool
-        wellfareOfficeRoleCid : ContractId WellfareRole
-      controller wellfareOffice
-      do
-        wellfareRole <- fetch wellfareOfficeRoleCid
-        assert (wellfareRole.party == wellfareOffice)
+--     choice SetAlimonyState: ContractId Citizen with
+--         alimonyIssues: Bool
+--         wellfareOfficeRoleCid : ContractId WellfareRole
+--       controller wellfareOffice
+--       do
+--         wellfareRole <- fetch wellfareOfficeRoleCid
+--         assert (wellfareRole.party == wellfareOffice)
         
-        assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
-        create this with hasAlimonyIssues = alimonyIssues
+--         assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
+--         create this with hasAlimonyIssues = alimonyIssues
 
 
-template CitizenRegistry with
-    internalAffairs : Party
-    healthOffice : Party
-    wellfareOffice : Party
-    citizens : [(Int, CitizenName)]
-  where
-    signatory internalAffairs
-    observer [healthOffice, wellfareOffice]
+  -- template CitizenRegistry with
+  --   internalAffairs : Party
+  --   healthOffice : Party
+  --   wellfareOffice : Party
+  --   citizens : [(Int, CitizenName)]
+  -- where
+  --   signatory internalAffairs
+  --   observer [healthOffice, wellfareOffice]
 
 -- MAIN_TEMPLATE_BEGIN
 template Citizen with
@@ -66,51 +65,43 @@ template Citizen with
     hasAlimonyIssues : Bool
   where
     signatory wellfareOffice, healthOffice
--- MAIN_TEMPLATE_END
-
-    --key anEntity: Party
-    --maintainer key
-
     -- Set covid state
     choice SetCovidState: ContractId Citizen with
         covidDetected: Bool
+        caller : Party
       controller healthOffice
       do
+        assertMsg "Invalid caller" (caller == healthOffice)
         assertMsg "No change required" (covidDetected /= hasCovid)
         create this with hasCovid = covidDetected
-    -- Set covid state END
-
     -- Set alimony state
     choice SetAlimonyState: ContractId Citizen with
         alimonyIssues: Bool
-        wellfareOfficeRoleCid : ContractId WellfareRole
+        caller : Party
       controller wellfareOffice
       do
-        wellfareRole <- fetch wellfareOfficeRoleCid
-        assert (wellfareRole.party == wellfareOffice)
+        --wellfareRole <- fetch wellfareOfficeRoleCid
+        assert (caller == wellfareOffice)
         
         assertMsg "No change required" (alimonyIssues /= hasAlimonyIssues)
         create this with hasAlimonyIssues = alimonyIssues
-    -- Set alimony state END
 
 
-ctTest = scenario do
-  alice <- getParty "Alice"
-  do
-    submit alice do
-      cc <- create Citizen with
-        anEntity = alice
-        firstName = "משה"
-        lastName = "lastenton"
-        id = 5550001
-        hasCovid = False
-        hasAlimonyIssues = False
-      cc1 <- exercise cc SetCovidState with
-        covidDetected = True
-      exercise cc1 SetAlimonyState with
-        alimonyIssues = True
-      -- alices <- query @Citizen alice
-      -- cc2 <- fst alices
-      -- exercise cc2 SetAlimonyState with
-      --   alimonyIssues = True
+-- ctTest = scenario do
+--   alice <- getParty "Alice"
+--   do
+--     submit healthOffice do
+--       cc <- create Citizen with
+--         wellfareOffice = getParty wellfareOffice
+--         healthOffice = getParty healthOffice
+--         firstName = "משה"
+--         lastName = "lastenton"
+--         id = 5550001
+--         hasCovid = False
+--         hasAlimonyIssues = False
+--       cc1 <- exercise cc SetCovidState with
+--         covidDetected = True
+--         caller = hhealthOffice
+--       -- exercise cc1 SetAlimonyState with
+--       --   alimonyIssues = True
  

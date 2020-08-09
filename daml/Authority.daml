@@ -1,42 +1,73 @@
 module Authority where
 
-data GovOffice = InternalAffairs | Wellfare | Health
-  deriving (Eq, Show, Enum)
+import Citizen
+
+-- data GovOffice = InternalAffairs | Wellfare | Health
+--   deriving (Eq, Show, Enum)
 
 template Authority with
     owner : Party
     name : Text
-    office : GovOffice
   where
     signatory owner
 
 template WellfareRole with
     wellfareOffice : Party
-    administrator : Party
   where
-    signatory party, administrator
+    signatory wellfareOffice
   
-    choice OnboardEmployee : ContractId WellfareEmployeeRole with
+    choice WFOnboardEmployee : ContractId WellfareEmployeeRole with
         employee : Party
-      controller     wellfareParty : Party
+      controller     wellfareOffice : Party
         do
-          create WellfareEmployeeRole with ..
+          create WellfareEmployeeRole with
+            employee = employee
+            wellfareOffice = wellfareOffice
         
         
 template WellfareEmployeeRole with
     employee : Party
     wellfareOffice : Party
-    administrator : Party
   where
-    signatory employee, wellfareOffice, administrator
+    signatory employee, wellfareOffice
 
-    choice SetAlimonyState : ContractId Citizen with
+    choice SetCitizenAlimonyState : ContractId Citizen with
         alimonyIssues: Bool
-        wellfareOfficeRoleCid : ContractId WellfareRole
         citizenCid : ContractId Citizen
       controller employee
         do
-          exercise citizenCid SetAlimonyState with ..
+          exercise citizenCid SetAlimonyState with
+            alimonyIssues = alimonyIssues
+            caller = wellfareOffice
+
+template HealthRole with
+    healthOffice : Party
+  where
+    signatory healthOffice
+  
+    choice HLTHOnboardEmployee : ContractId HealthEmployeeRole with
+        employee : Party
+      controller     healthOffice : Party
+        do
+          create HealthEmployeeRole with
+            employee = employee
+            healthOffice = healthOffice
+        
+        
+template HealthEmployeeRole with
+    employee : Party
+    healthOffice : Party
+  where
+    signatory employee, healthOffice
+
+    choice SetCitizenCovidState : ContractId Citizen with
+        hasCovid : Bool
+        citizenCid : ContractId Citizen
+      controller employee
+        do
+          exercise citizenCid SetCovidState with
+            covidDetected = hasCovid
+            caller = healthOffice
             
 
           
