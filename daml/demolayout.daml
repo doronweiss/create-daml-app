@@ -1,1 +1,64 @@
-module demolayout with
+module Demolayout where
+import DA.Date
+
+-- *** CovidDetection ***
+template CovidDetection with
+    party : Party
+    detected : Bool
+  where
+    signatory health
+
+template CovidProposal with
+    party : Party
+  where
+    signatory health, hls          
+
+    choice CovidProposalAccept : ContractId CovidDetection with
+        detected : Bool
+        patient : Party
+      controller health
+      do
+        --assertMsg "bad caller" (controller. == getParty Health)
+        create  CovidDetection with
+          party = patient
+          detected = detected
+
+template AlimonyIssue with
+    party : Party
+    hasIssues : Bool
+  where
+    signatory internalAffairs
+
+-- *** AlimonyIssue ***
+template AlimonyIssueProposal with
+    party : Party
+  where
+    signatory internalAffairs, wellfare          
+
+    choice AlimonyIssueProposalAccept : ContractId AlimonyIssue 
+      with
+        hasIssues : Bool
+        patient : Party
+      controller internalAffairs
+      do
+        -- assertMsg "bad caller" (controller == getParty internalAffairs)
+        create  AlimonyIssue with
+          party = patient
+          hasIssues = hasIssues       
+
+-- *** Citizen ***
+template Citizen with
+    citizen : Party
+    firstName : Text
+    lastName : Text
+    dob : Date
+    address : Text
+    id : Int
+  where
+   signatory internalAffairs
+
+
+
+          
+
+    

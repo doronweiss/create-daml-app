@@ -72,36 +72,36 @@ template HealthEmployeeRole with
 
           
 
-ctTest = scenario do
-  alice <- getParty "Alice"
-  clerck <- getParty "Clerk"
-  hlthClerck <- getParty "healthClerck"
-  wellfareOffice <- getParty "wellfareOffice"
-  healthOffice <- getParty "healthOffice"
-  internalAffairsOffice <- getParty "internalAffairsOffice"
-  do
-    submit healthOffice do
-      hlthr <- create HealthRole with 
-        healthOffice = healthOffice
-      hlthEmp <- exercise hlthr  HLTHOnboardEmployee with 
-        employee = hlthClerck
-      do
-        submit internalAffairsOffice do
-          cc <- create Citizen with
-            internalAffairsOffice = internalAffairsOffice
-            wellfareOffice = wellfareOffice
-            healthOffice = healthOffice
-            firstName = "משה"
-            lastName = "lastenton"
-            id = 5550001
-            hasCovid = False
-            hasAlimonyIssues = False
-          None
-          do
-            submit clerck do
-              cc1 <- exercise hlthEmp SetCitizenCovidState with
-                hasCovid = True
-                citizenCid = cc
-              None
-            None
+-- ctTest = scenario do
+--   alice <- getParty "Alice"
+--   clerck <- getParty "Clerk"
+--   hlthClerck <- getParty "healthClerck"
+--   wellfareOffice <- getParty "wellfareOffice"
+--   healthOffice <- getParty "healthOffice"
+--   internalAffairsOffice <- getParty "internalAffairsOffice"
+--   do
+--     submit healthOffice do
+--       hlthr <- create HealthRole with 
+--         healthOffice = healthOffice
+--       hlthEmp <- exercise hlthr  HLTHOnboardEmployee with 
+--         employee = hlthClerck
+--       do
+--         submit internalAffairsOffice do
+--           cc <- create Citizen with
+--             internalAffairsOffice = internalAffairsOffice
+--             wellfareOffice = wellfareOffice
+--             healthOffice = healthOffice
+--             firstName = "משה"
+--             lastName = "lastenton"
+--             id = 5550001
+--             hasCovid = False
+--             hasAlimonyIssues = False
+--           None
+--           do
+--             submit clerck do
+--               cc1 <- exercise hlthEmp SetCitizenCovidState with
+--                 hasCovid = True
+--                 citizenCid = cc
+--               None
+--             None
         
