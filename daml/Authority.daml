@@ -1,112 +1,31 @@
 module Authority where
 
-import Citizen
-
-data GovOffice = InternalAffairs | Wellfare | Health
+data GovOffice = InternalAffairs | Wellfare | Health | HLS | BorderControl
   deriving (Eq, Show, Enum)
 
-
-
-template Authority with
-    owner : Party
+template AuthorityEmployeeRole with
+    employee : Party
     superUser : Party
     office : GovOffice
     name : Text
-    guid : Text
   where
-    signatory superUser, owner
+    signatory superUser
 
-template WellfareRole with
-    wellfareOffice : Party
+template AuthorityRole with
+    authority : Party
+    superUser : Party
   where
-    signatory wellfareOffice
+    signatory superUser
   
-    choice WFOnboardEmployee : ContractId WellfareEmployeeRole with
-        employee : Party
-      controller     wellfareOffice : Party
+    choice WFOnboardEmployee : ContractId AuthorityEmployeeRole with
+        anEmployee : Party
+        aOffice : GovOffice
+        aName : Text
+      controller superUser : Party
         do
-          create WellfareEmployeeRole with
-            employee = employee
-            wellfareOffice = wellfareOffice
-        
-        
-template WellfareEmployeeRole with
-    employee : Party
-    wellfareOffice : Party
-  where
-    signatory employee, wellfareOffice
-
-    choice SetCitizenAlimonyState : ContractId Citizen with
-        alimonyIssues: Bool
-        citizenCid : ContractId Citizen
-      controller employee
-        do
-          exercise citizenCid SetAlimonyState with
-            alimonyIssues = alimonyIssues
-            caller = wellfareOffice
-
-template HealthRole with
-    healthOffice : Party
-  where
-    signatory healthOffice
-  
-    choice HLTHOnboardEmployee : ContractId HealthEmployeeRole with
-        employee : Party
-      controller     healthOffice : Party
-        do
-          create HealthEmployeeRole with
-            employee = employee
-            healthOffice = healthOffice
-        
-        
-template HealthEmployeeRole with
-    employee : Party
-    healthOffice : Party
-  where
-    signatory employee, healthOffice
-
-    choice SetCitizenCovidState : ContractId Citizen with
-        hasCovid : Bool
-        citizenCid : ContractId Citizen
-      controller employee
-        do
-          exercise citizenCid SetCovidState with
-            covidDetected = hasCovid
-            caller = healthOffice
-            
-
-          
-
--- ctTest = scenario do
---   alice <- getParty "Alice"
---   clerck <- getParty "Clerk"
---   hlthClerck <- getParty "healthClerck"
---   wellfareOffice <- getParty "wellfareOffice"
---   healthOffice <- getParty "healthOffice"
---   internalAffairsOffice <- getParty "internalAffairsOffice"
---   do
---     submit healthOffice do
---       hlthr <- create HealthRole with 
---         healthOffice = healthOffice
---       hlthEmp <- exercise hlthr  HLTHOnboardEmployee with 
---         employee = hlthClerck
---       do
---         submit internalAffairsOffice do
---           cc <- create Citizen with
---             internalAffairsOffice = internalAffairsOffice
---             wellfareOffice = wellfareOffice
---             healthOffice = healthOffice
---             firstName = "משה"
---             lastName = "lastenton"
---             id = 5550001
---             hasCovid = False
---             hasAlimonyIssues = False
---           None
---           do
---             submit clerck do
---               cc1 <- exercise hlthEmp SetCitizenCovidState with
---                 hasCovid = True
---                 citizenCid = cc
---               None
---             None
+          create AuthorityEmployeeRole with
+            employee = anEmployee
+            superUser = superUser
+            office = aOffice
+            name = aName
         

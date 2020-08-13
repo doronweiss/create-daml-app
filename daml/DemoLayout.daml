@@ -1,11 +1,13 @@
-module Demolayout where
+module DemoLayout where
 import DA.Date
+
+import Authority
 
 -- *** CovidDetection ***
 template CovidDetection with
     id : Int
     detected : Bool
-    health : Party -- ?
+    health : Party 
     observers : [Party]
   where
     signatory health
@@ -13,9 +15,12 @@ template CovidDetection with
     -- key (health, id)
 
     choice MarkAsHealthy : ContractId CovidDetection with
+        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
         health : Party
       controller health
         do
+        assert (healthRole.office == GovOffice Health)
+        assert (healthRole.owner == health)
         create  CovidDetection with
           party = party
           detected = False
@@ -24,8 +29,8 @@ template CovidDetection with
           
 template CovidProposal with
     id : Number -- "id05660001"
-    health : Party -- ?
-    hls : Party -- ?
+    health : Party 
+    hls : Party 
     internalAffairs : Party
     borderControl : Party
   where
@@ -33,7 +38,7 @@ template CovidProposal with
     observer [health, internalAffairs]
 
     choice CovidProposalAccept : ContractId CovidDetection with
-        healthDepartmentRoleCid : ContractId Authority
+        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
         health : Party
       controller health 
       do
@@ -49,7 +54,7 @@ template CovidProposal with
           observers = [hls, borderControl]
     
     choice CovidProposalReject : ContractId CovidDetection with
-        healthDepartmentRoleCid : ContractId Authority
+        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
         health : Party
       controller health 
       do
@@ -64,26 +69,11 @@ template CovidProposal with
           health = health
           observers = [hls, borderControl, internalAffairs]
 
-template CovidProposalHealth with
-    party : Party -- "id05660001"
-    detected : Bool
-    health : Party -- ?
-  where
-    signatory health          
-
-    choice CovidProposalHealthAccept : ContractId CovidDetection with
-      controller health
-      do
-        assertMsg "bad caller" (health == getParty health)
-        create  CovidDetection with
-          party = party
-          detected = detected
-          health = health
 
 template AlimonyIssue with
     party : Party
     hasIssues : Bool
-    internalAffairs : Party -- ?
+    internalAffairs : Party 
   where
     signatory internalAffairs
 
@@ -91,8 +81,8 @@ template AlimonyIssue with
 template AlimonyIssueProposal with
     party : Party
     hasIssues : Bool
-    internalAffairs : Party -- ?
-    wellfare : Party -- ?
+    internalAffairs : Party 
+    wellfare : Party 
  where
     signatory internalAffairs, wellfare          
 
@@ -113,15 +103,15 @@ template Citizen with
     dob : Date
     address : Text
     id : Int
-    internalAffairs : Party -- ?
+    internalAffairs : Party 
   where
     signatory internalAffairs
     
-    choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
-      controller internalAffairs 
-      do
-        assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
-        create  AlimonyIssue with
-          party = party
-          hasIssues = hasIssues
-          internalAffairs = internalAffairs
+    -- choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
+    --   controller internalAffairs 
+    --   do
+    --     assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
+    --     create  AlimonyIssue with
+    --       party = party
+    --       hasIssues = hasIssues
+    --       internalAffairs = internalAffairs
