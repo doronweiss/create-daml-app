@@ -9,18 +9,17 @@ template CovidDetection with
     signatory health
 
 template CovidProposal with
-    party : Party
+    party : Party -- "id05660001"
+    detected : Bool
   where
     signatory health, hls          
 
     choice CovidProposalAccept : ContractId CovidDetection with
-        detected : Bool
-        patient : Party
       controller health
       do
         --assertMsg "bad caller" (controller. == getParty Health)
         create  CovidDetection with
-          party = patient
+          party = party
           detected = detected
 
 template AlimonyIssue with
@@ -32,23 +31,20 @@ template AlimonyIssue with
 -- *** AlimonyIssue ***
 template AlimonyIssueProposal with
     party : Party
-  where
+    hasIssues : Bool
+ where
     signatory internalAffairs, wellfare          
 
-    choice AlimonyIssueProposalAccept : ContractId AlimonyIssue 
-      with
-        hasIssues : Bool
-        patient : Party
-      controller internalAffairs
+    controller internalAffairs can AlimonyIssueProposalAccept : ContractId AlimonyIssue       
       do
         -- assertMsg "bad caller" (controller == getParty internalAffairs)
         create  AlimonyIssue with
-          party = patient
+          party = party
           hasIssues = hasIssues       
 
 -- *** Citizen ***
 template Citizen with
-    citizen : Party
+    citizen : Party -- "id05660001"
     firstName : Text
     lastName : Text
     dob : Date
