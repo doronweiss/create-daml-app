@@ -2,14 +2,19 @@ module Authority where
 
 import Citizen
 
--- data GovOffice = InternalAffairs | Wellfare | Health
---   deriving (Eq, Show, Enum)
+data GovOffice = InternalAffairs | Wellfare | Health
+  deriving (Eq, Show, Enum)
+
+
 
 template Authority with
     owner : Party
+    superUser : Party
+    office : GovOffice
     name : Text
+    guid : Text
   where
-    signatory owner
+    signatory superUser, owner
 
 template WellfareRole with
     wellfareOffice : Party

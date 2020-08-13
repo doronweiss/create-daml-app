@@ -3,28 +3,66 @@ import DA.Date
 
 -- *** CovidDetection ***
 template CovidDetection with
-    party : Party
+    id : Int
     detected : Bool
     health : Party -- ?
+    observers : [Party]
   where
     signatory health
+    observer observers
+    -- key (health, id)
 
+    choice MarkAsHealthy : ContractId CovidDetection with
+        health : Party
+      controller health
+        do
+        create  CovidDetection with
+          party = party
+          detected = False
+          health = health
+          observers = [hls, borderControl]
+          
 template CovidProposal with
-    party : Party -- "id05660001"
-    detected : Bool
+    id : Number -- "id05660001"
     health : Party -- ?
     hls : Party -- ?
+    internalAffairs : Party
+    borderControl : Party
   where
-    signatory health, hls          
+    signatory hls
+    observer [health, internalAffairs]
 
     choice CovidProposalAccept : ContractId CovidDetection with
-      controller health
+        healthDepartmentRoleCid : ContractId Authority
+        health : Party
+      controller health 
       do
+        healthRole <- fetch healthDepartmentRoleCid
+        assert (healthRole.office == GovOffice Health)
+        assert (healthRole.owner == health)
+        
         --assertMsg "bad caller" (controller == getParty Health)
         create  CovidDetection with
           party = party
-          detected = detected
+          detected = True
           health = health
+          observers = [hls, borderControl]
+    
+    choice CovidProposalReject : ContractId CovidDetection with
+        healthDepartmentRoleCid : ContractId Authority
+        health : Party
+      controller health 
+      do
+        healthRole <- fetch healthDepartmentRoleCid
+        assert (healthRole.office == GovOffice Health)
+        assert (healthRole.owner == health)
+        
+        --assertMsg "bad caller" (controller == getParty Health)
+        create  CovidDetection with
+          party = party
+          detected = False
+          health = health
+          observers = [hls, borderControl, internalAffairs]
 
 template CovidProposalHealth with
     party : Party -- "id05660001"
@@ -77,10 +115,13 @@ template Citizen with
     id : Int
     internalAffairs : Party -- ?
   where
-   signatory internalAffairs
-
-
-
-          
-
+    signatory internalAffairs
     
+    choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
+      controller internalAffairs 
+      do
+        assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
+        create  AlimonyIssue with
+          party = party
+          hasIssues = hasIssues
+          internalAffairs = internalAffairs
