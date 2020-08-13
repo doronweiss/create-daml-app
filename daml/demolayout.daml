@@ -52,7 +52,7 @@ template Citizen with
     firstName : Text
     lastName : Text
     dob : Date
-    address : Text
+    address : Text'
     id : Int
   where
    signatory internalAffairs
