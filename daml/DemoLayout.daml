@@ -16,9 +16,8 @@ template CovidDetection with
 
     choice MarkAsHealthy : ContractId CovidDetection with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-        health : Party
-      controller health
-        do
+      do
+        healthRole <- fetch healthDepartmentRoleCid
         assert (healthRole.office == GovOffice Health)
         assert (healthRole.owner == health)
         create  CovidDetection with
