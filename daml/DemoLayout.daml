@@ -2,16 +2,18 @@ module DemoLayout where
 -- import DA.Date
 
 import Authority
+import Citizen
 
 -- *** CovidDetection ***
 template CovidDetection with
     id : Int
     detected : Bool
-    health : AuthorityEmployeeRole 
+    health : AuthorityEmployeeRole
+    borderCtrl : AuthorityEmployeeRole
     -- observers : [ContractId AuthorityEmployeeRole]
   where
     signatory health.employee
-    --observer observers
+    observer borderCtrl.employee
     -- key (health, id)
 
     -- ContractId CovidDetection
@@ -32,6 +34,7 @@ template CovidProposal with
 
     choice CovidProposalAccept : ContractId CovidDetection with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
+        borderCtrl : AuthorityEmployeeRole
       controller health.employee 
       do
         healthRole <- fetch healthDepartmentRoleCid
@@ -40,7 +43,7 @@ template CovidProposal with
           id = id
           detected = True
           health = healthRole
-          -- observers = [hls, borderControl, internalAffairs]
+          borderCtrl = borderCtrl
     
     -- ContractId CovidDetection
     choice CovidProposalReject :  () with
@@ -54,8 +57,10 @@ template AlimonyIssue with
     id : Int
     hasIssues : Bool
     internalAffairs : AuthorityEmployeeRole 
+    borderCtrl : AuthorityEmployeeRole
   where
     signatory internalAffairs.employee
+    observer borderCtrl.employee
 
     -- ContractId CovidDetection
     choice MarkAsNoAlimonyIssues : () with
@@ -69,13 +74,12 @@ template AlimonyIssue with
 template AlimonyIssueProposal with
     id : Int -- "id05660001"
     internalAffairs : AuthorityEmployeeRole
-    borderControl : AuthorityEmployeeRole
   where
     signatory internalAffairs.employee
-    observer borderControl.employee
 
     choice AlimonyIssueProposalAccept : ContractId AlimonyIssue with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
+        borderCtrl : AuthorityEmployeeRole
       controller internalAffairs.employee
       do
         internalAffairsRole <- fetch internalAffairsRoleCid
@@ -84,17 +88,11 @@ template AlimonyIssueProposal with
           id = id
           hasIssues = True
           internalAffairs = internalAffairsRole
-          -- observers = [hls, borderControl, internalAffairs]
+          borderCtrl = borderCtrl
     
-    -- ContractId CovidDetection
     choice AlimonyIssueProposalReject : () with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
       controller internalAffairs.employee
       do
         internalAffairsRole <- fetch internalAffairsRoleCid
         assert (internalAffairsRole.office == GOInternalAffairs)
-        -- create  CovidDetection with
-        --   id = id
-        --   detected = False
-        --   health = health
-          -- observers = [hls, borderControl, internalAffairs]
