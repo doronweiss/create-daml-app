@@ -26,11 +26,9 @@ template CovidProposal with
     id : Int -- "id05660001"
     health : AuthorityEmployeeRole 
     hls : AuthorityEmployeeRole 
-    internalAffairs : AuthorityEmployeeRole
-    borderControl : AuthorityEmployeeRole
   where
     signatory hls.employee
-    observer [health.employee, internalAffairs.employee]
+    observer health.employee
 
     choice CovidProposalAccept : ContractId CovidDetection with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
@@ -51,13 +49,6 @@ template CovidProposal with
       do
         healthRole <- fetch healthDepartmentRoleCid
         assert (healthRole.office == GOHealth)
-        -- archive this
-        -- create  CovidDetection with
-        --   id = id
-        --   detected = False
-        --   health = health
-        --   -- observers = [hls, borderControl, internalAffairs]
-
 
 template AlimonyIssue with
     id : Int
