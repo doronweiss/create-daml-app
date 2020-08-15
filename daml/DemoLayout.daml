@@ -1,5 +1,5 @@
 module DemoLayout where
-import DA.Date
+-- import DA.Date
 
 import Authority
 
@@ -7,7 +7,7 @@ import Authority
 template CovidDetection with
     id : Int
     detected : Bool
-    health : ContractId AuthorityEmployeeRole 
+    health : AuthorityEmployeeRole 
     -- observers : [ContractId AuthorityEmployeeRole]
   where
     signatory health.employee
@@ -17,43 +17,40 @@ template CovidDetection with
     -- ContractId CovidDetection
     choice MarkAsHealthy : () with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-      controller health
+      controller health.employee
       do
         healthRole <- fetch healthDepartmentRoleCid
         assert (healthRole.office == GOHealth)
-        assert (healthRole.owner == health)
           
 template CovidProposal with
     id : Int -- "id05660001"
-    health : ContractId AuthorityEmployeeRole 
-    hls : ContractId AuthorityEmployeeRole 
-    internalAffairs : ContractId AuthorityEmployeeRole
-    borderControl : ContractId AuthorityEmployeeRole
+    health : AuthorityEmployeeRole 
+    hls : AuthorityEmployeeRole 
+    internalAffairs : AuthorityEmployeeRole
+    borderControl : AuthorityEmployeeRole
   where
-    signatory hls
-    observer [health, internalAffairs]
+    signatory hls.employee
+    observer [health.employee, internalAffairs.employee]
 
     choice CovidProposalAccept : ContractId CovidDetection with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-      controller health 
+      controller health.employee 
       do
         healthRole <- fetch healthDepartmentRoleCid
         assert (healthRole.office == GOHealth)
-        assert (healthRole.owner == health)
         create  CovidDetection with
           id = id
           detected = True
-          health = healthDepartmentRoleCid
+          health = healthRole
           -- observers = [hls, borderControl, internalAffairs]
     
     -- ContractId CovidDetection
     choice CovidProposalReject :  () with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-      controller health 
+      controller health.employee
       do
         healthRole <- fetch healthDepartmentRoleCid
         assert (healthRole.office == GOHealth)
-        assert (healthRole.owner == health)
         -- archive this
         -- create  CovidDetection with
         --   id = id
@@ -65,49 +62,46 @@ template CovidProposal with
 template AlimonyIssue with
     id : Int
     hasIssues : Bool
-    internalAffairs : ContractId AuthorityEmployeeRole 
+    internalAffairs : AuthorityEmployeeRole 
   where
-    signatory internalAffairs
+    signatory internalAffairs.employee
 
     -- ContractId CovidDetection
     choice MarkAsNoAlimonyIssues : () with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
-      controller internalAffairs
+      controller internalAffairs.employee
       do
         internalAffairsRole <- fetch internalAffairsRoleCid
         assert (internalAffairsRole.office == GOInternalAffairs)
-        assert (internalAffairsRole.owner == internalAffairs)
 
 
 template AlimonyIssueProposal with
     id : Int -- "id05660001"
-    internalAffairs : ContractId AuthorityEmployeeRole
-    borderControl : ContractId AuthorityEmployeeRole
+    internalAffairs : AuthorityEmployeeRole
+    borderControl : AuthorityEmployeeRole
   where
-    signatory internalAffairs
-    observer [borderControl]
+    signatory internalAffairs.employee
+    observer borderControl.employee
 
     choice AlimonyIssueProposalAccept : ContractId AlimonyIssue with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
-      controller internalAffairs 
+      controller internalAffairs.employee
       do
         internalAffairsRole <- fetch internalAffairsRoleCid
         assert (internalAffairsRole.office == GOInternalAffairs)
-        assert (internalAffairsRole.owner == internalAffairs)
         create  AlimonyIssue with
           id = id
           hasIssues = True
-          internalAffairs = internalAffairsRoleCid
+          internalAffairs = internalAffairsRole
           -- observers = [hls, borderControl, internalAffairs]
     
     -- ContractId CovidDetection
     choice AlimonyIssueProposalReject : () with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
-      controller internalAffairs 
+      controller internalAffairs.employee
       do
-        healthRole <- fetch internalAffairsRoleCid
-        assert (healthRole.office == GOInternalAffairs)
-        assert (healthRole.owner == internalAffairs)
+        internalAffairsRole <- fetch internalAffairsRoleCid
+        assert (internalAffairsRole.office == GOInternalAffairs)
         -- create  CovidDetection with
         --   id = id
         --   detected = False
