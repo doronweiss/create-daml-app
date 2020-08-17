@@ -14,103 +14,103 @@ template CovidDetection with
     observer observers
     -- key (health, id)
 
-    choice MarkAsHealthy : ContractId CovidDetection with
-        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-      do
-        healthRole <- fetch healthDepartmentRoleCid
-        assert (healthRole.office == GovOffice Health)
-        assert (healthRole.owner == health)
-        create  CovidDetection with
-          party = party
-          detected = False
-          health = health
-          observers = [hls, borderControl]
-          
-template CovidProposal with
-    id : Number -- "id05660001"
-    health : Party 
-    hls : Party 
-    internalAffairs : Party
-    borderControl : Party
-  where
-    signatory hls
-    observer [health, internalAffairs]
-
-    choice CovidProposalAccept : ContractId CovidDetection with
-        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-        health : Party
-      controller health 
-      do
-        healthRole <- fetch healthDepartmentRoleCid
-        assert (healthRole.office == GovOffice Health)
-        assert (healthRole.owner == health)
-        
-        --assertMsg "bad caller" (controller == getParty Health)
-        create  CovidDetection with
-          party = party
-          detected = True
-          health = health
-          observers = [hls, borderControl]
-    
-    choice CovidProposalReject : ContractId CovidDetection with
-        healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-        health : Party
-      controller health 
-      do
-        healthRole <- fetch healthDepartmentRoleCid
-        assert (healthRole.office == GovOffice Health)
-        assert (healthRole.owner == health)
-        
-        --assertMsg "bad caller" (controller == getParty Health)
-        create  CovidDetection with
-          party = party
-          detected = False
-          health = health
-          observers = [hls, borderControl, internalAffairs]
-
-
-template AlimonyIssue with
-    party : Party
-    hasIssues : Bool
-    internalAffairs : Party 
-  where
-    signatory internalAffairs
-
--- *** AlimonyIssue ***
-template AlimonyIssueProposal with
-    party : Party
-    hasIssues : Bool
-    internalAffairs : Party 
-    wellfare : Party 
- where
-    signatory internalAffairs, wellfare          
-
-    choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
-      controller internalAffairs 
-      do
-        assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
-        create  AlimonyIssue with
-          party = party
-          hasIssues = hasIssues
-          internalAffairs = internalAffairs
-
--- *** Citizen ***
-template Citizen with
-    citizen : Party -- "id05660001"
-    firstName : Text
-    lastName : Text
-    dob : Date
-    address : Text
-    id : Int
-    internalAffairs : Party 
-  where
-    signatory internalAffairs
-    
-    -- choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
-    --   controller internalAffairs 
+    -- choice MarkAsHealthy : ContractId CovidDetection with
+    --     healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
     --   do
-    --     assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
-    --     create  AlimonyIssue with
+    --     healthRole <- fetch healthDepartmentRoleCid
+    --     assert (healthRole.office == GovOffice Health)
+    --     assert (healthRole.owner == health)
+    --     create  CovidDetection with
     --       party = party
-    --       hasIssues = hasIssues
-    --       internalAffairs = internalAffairs
+    --       detected = False
+    --       health = health
+    --       observers = [hls, borderControl]
+          
+-- template CovidProposal with
+--     id : Number -- "id05660001"
+--     health : Party 
+--     hls : Party 
+--     internalAffairs : Party
+--     borderControl : Party
+--   where
+--     signatory hls
+--     observer [health, internalAffairs]
+
+--     choice CovidProposalAccept : ContractId CovidDetection with
+--         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
+--         health : Party
+--       controller health 
+--       do
+--         healthRole <- fetch healthDepartmentRoleCid
+--         assert (healthRole.office == GovOffice Health)
+--         assert (healthRole.owner == health)
+        
+--         --assertMsg "bad caller" (controller == getParty Health)
+--         create  CovidDetection with
+--           party = party
+--           detected = True
+--           health = health
+--           observers = [hls, borderControl]
+    
+--     choice CovidProposalReject : ContractId CovidDetection with
+--         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
+--         health : Party
+--       controller health 
+--       do
+--         healthRole <- fetch healthDepartmentRoleCid
+--         assert (healthRole.office == GovOffice Health)
+--         assert (healthRole.owner == health)
+        
+--         --assertMsg "bad caller" (controller == getParty Health)
+--         create  CovidDetection with
+--           party = party
+--           detected = False
+--           health = health
+--           observers = [hls, borderControl, internalAffairs]
+
+
+-- template AlimonyIssue with
+--     party : Party
+--     hasIssues : Bool
+--     internalAffairs : Party 
+--   where
+--     signatory internalAffairs
+
+-- -- *** AlimonyIssue ***
+-- template AlimonyIssueProposal with
+--     party : Party
+--     hasIssues : Bool
+--     internalAffairs : Party 
+--     wellfare : Party 
+--  where
+--     signatory internalAffairs, wellfare          
+
+--     choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
+--       controller internalAffairs 
+--       do
+--         assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
+--         create  AlimonyIssue with
+--           party = party
+--           hasIssues = hasIssues
+--           internalAffairs = internalAffairs
+
+-- -- *** Citizen ***
+-- template Citizen with
+--     citizen : Party -- "id05660001"
+--     firstName : Text
+--     lastName : Text
+--     dob : Date
+--     address : Text
+--     id : Int
+--     internalAffairs : Party 
+--   where
+--     signatory internalAffairs
+    
+--     -- choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
+--     --   controller internalAffairs 
+--     --   do
+--     --     assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
+--     --     create  AlimonyIssue with
+--     --       party = party
+--     --       hasIssues = hasIssues
+--     --       internalAffairs = internalAffairs
