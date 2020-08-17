@@ -3,10 +3,13 @@ module Authority where
 data GovOffice = GOInternalAffairs | GOWellfare | GOHealth | GOHLS | BorderControl
   deriving (Eq, Show, Enum)
 
+-- predefined Parteis: PInternalAffairs PHLS  PWellfare PHealth PBorderControl
+
 template AuthorityEmployeeRole with
-    employee : Party
     superUser : Party
+    employee : Party
     office : GovOffice
+    officeParty : Party
     name : Text
   where
     signatory superUser
@@ -20,6 +23,7 @@ template AuthorityRole with
     choice WFOnboardEmployee : ContractId AuthorityEmployeeRole with
         anEmployee : Party
         aOffice : GovOffice
+        officeParty : Party
         aName : Text
       controller superUser : Party
         do
@@ -28,4 +32,5 @@ template AuthorityRole with
             superUser = superUser
             office = aOffice
             name = aName
-        
+            officeParty = officeParty
+    

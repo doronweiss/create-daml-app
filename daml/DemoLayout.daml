@@ -9,11 +9,11 @@ template CovidDetection with
     id : Int
     detected : Bool
     health : AuthorityEmployeeRole
-    borderCtrl : AuthorityEmployeeRole
+    borderCtrl : Party
     -- observers : [ContractId AuthorityEmployeeRole]
   where
     signatory health.employee
-    observer borderCtrl.employee
+    observer borderCtrl
     -- key (health, id)
 
     -- ContractId CovidDetection
@@ -34,7 +34,7 @@ template CovidProposal with
 
     choice CovidProposalAccept : ContractId CovidDetection with
         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-        borderCtrl : AuthorityEmployeeRole
+        borderCtrl : Party
       controller health.employee 
       do
         healthRole <- fetch healthDepartmentRoleCid
@@ -57,10 +57,10 @@ template AlimonyIssue with
     id : Int
     hasIssues : Bool
     internalAffairs : AuthorityEmployeeRole 
-    borderCtrl : AuthorityEmployeeRole
+    borderCtrl : Party
   where
     signatory internalAffairs.employee
-    observer borderCtrl.employee
+    observer borderCtrl
 
     -- ContractId CovidDetection
     choice MarkAsNoAlimonyIssues : () with
@@ -79,7 +79,7 @@ template AlimonyIssueProposal with
 
     choice AlimonyIssueProposalAccept : ContractId AlimonyIssue with
         internalAffairsRoleCid : ContractId AuthorityEmployeeRole
-        borderCtrl : AuthorityEmployeeRole
+        borderCtrl : Party
       controller internalAffairs.employee
       do
         internalAffairsRole <- fetch internalAffairsRoleCid
