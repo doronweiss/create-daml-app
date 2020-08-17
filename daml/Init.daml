@@ -1,0 +1,11 @@
+module Init where
+
+import Daml.Script 
+
+initializeFixed : Script ()
+initializeFixed = do
+    superUser <- allocatePartyWithHint "superUser" (PartyIdHint "superUser")
+    borderCtrlSeeCovid <- allocatePartyWithHint "borderCtrlSeeCovid" (PartyIdHint "borderCtrlSeeCovid")
+    borderCtrlSeeAlimony <- allocatePartyWithHint "borderCtrlSeeAlimony" (PartyIdHint "borderCtrlSeeAlimony")
+    let parties = [superUser borderCtrlSeeCovid borderCtrlSeeAlimony]
+    initialize parties
