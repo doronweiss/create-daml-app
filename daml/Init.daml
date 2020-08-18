@@ -1,12 +1,42 @@
 module Init where
 
+import Authority
 import Daml.Script 
 
-initializeFixed : Script ()
-initializeFixed = do
-    superUser <- allocatePartyWithHint "superUser" (PartyIdHint "superUser")
-    borderCtrlSeeCovid <- allocatePartyWithHint "borderCtrlSeeCovid" (PartyIdHint "borderCtrlSeeCovid")
-    borderCtrlSeeAlimony <- allocatePartyWithHint "borderCtrlSeeAlimony" (PartyIdHint "borderCtrlSeeAlimony")
-    -- let parties = [superUser borderCtrlSeeCovid borderCtrlSeeAlimony]
-    return ()
-    --initialize parties
+-- https://blog.knoldus.com/extracting-party-data-from-ledger-in-daml/
+
+initialize  : Script ()
+initialize  = do
+    -- allocate parties
+    superuser <- allocatePartyWithHint "superUser" (PartyIdHint "superUser")
+    healthOffice <- allocatePartyWithHint  "healthOffice" (PartyIdHint "healthOffice")
+    borderCtrl <- allocatePartyWithHint  "borderCtrl"  (PartyIdHint "borderCtrl")
+    internalAffairsOffice <- allocatePartyWithHint  "internalAffairsOffice" (PartyIdHint "internalAffairsOffice")
+    wellfareOffice <- allocatePartyWithHint  "wellfareOffice" (PartyIdHint "wellfareOffice")
+    hlsOffice <- allocatePartyWithHint  "hlsOffice"  (PartyIdHint "hlsOffice")
+    -- careate roles
+    -- x <- submit superuser do 
+    --     create AuthorityEmployeeRole with
+    --         superUser = superuser
+    --         office = GOHLS
+    --         officeParty = hlsOffice
+    --         name = "hls employee"
+    -- x <- submit superuser do 
+    --     create AuthorityEmployeeRole with
+    --         superUser = superuser
+    --         office = GOHealth
+    --         officeParty = healthOffice
+    --         name = "health employee"
+    -- x <- submit superuser do 
+    --     create AuthorityEmployeeRole with
+    --         superUser = superuser
+    --         office = GOBorderControl
+    --         officeParty = borderCtrl
+    --         name = "borderCtrl employee"
+    -- x <- submit superuser do 
+    --     create AuthorityEmployeeRole with
+    --         superUser = superuser
+    --         office = GOInternalAffairs
+    --         officeParty = internalAffairsOffice
+    --         name = "borderCtrl employee"
+    pure ()
