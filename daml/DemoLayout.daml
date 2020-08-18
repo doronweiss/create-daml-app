@@ -67,7 +67,7 @@ template CovidProposal with
           detected = True
           healthEmployeeRoleCID = healthEmployeeRoleCid
           healthOffice = healthOffice
-          observers = [borderCtrl, healthEmployeeRole.officeParty]
+          observers = [borderCtrl, healthOffice]
     
     -- ContractId CovidDetection
     choice CovidProposalReject :  () with
