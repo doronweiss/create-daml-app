@@ -7,30 +7,30 @@ data GovOffice = GOInternalAffairs | GOWellfare | GOHealth | GOHLS | BorderContr
 
 template AuthorityEmployeeRole with
     superUser : Party
-    employee : Party
+    --employee : Party
     office : GovOffice
     officeParty : Party
     name : Text
   where
     signatory superUser
 
-template AuthorityRole with
-    authority : Party
-    superUser : Party
-  where
-    signatory superUser
+-- template AuthorityRole with
+--     authority : Party
+--     superUser : Party
+--   where
+--     signatory superUser
   
-    choice WFOnboardEmployee : ContractId AuthorityEmployeeRole with
-        anEmployee : Party
-        aOffice : GovOffice
-        officeParty : Party
-        aName : Text
-      controller superUser : Party
-        do
-          create AuthorityEmployeeRole with
-            employee = anEmployee
-            superUser = superUser
-            office = aOffice
-            name = aName
-            officeParty = officeParty
+--     choice WFOnboardEmployee : ContractId AuthorityEmployeeRole with
+--         anEmployee : Party
+--         aOffice : GovOffice
+--         officeParty : Party
+--         aName : Text
+--       controller superUser : Party
+--         do
+--           create AuthorityEmployeeRole with
+--             employee = anEmployee
+--             superUser = superUser
+--             office = aOffice
+--             name = aName
+--             officeParty = officeParty
     

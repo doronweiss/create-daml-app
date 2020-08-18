@@ -136,13 +136,12 @@ template AlimonyProposal with
         internalAffairsEmployeeRole <- fetch internalAffairsEmployeeRoleCid
         assert (internalAffairsEmployeeRole.office == GOInternalAffairs)
         assert (internalAffairsEmployeeRole.officeParty == internalAffairsOffice)
-        assert (internalAffairsEmployeeRole.employee == internalAffairsEmployee)
         create  AlimonyIssue with
           id = id
           hasIssues = True
           internalAffairsEmployeeRoleCid = internalAffairsEmployeeRoleCid
           internalAffairsOffice = internalAffairsOffice
-          observers = [borderCtrl, internalAffairsEmployeeRole.employee]
+          observers = [borderCtrl, internalAffairsEmployee]
     
     -- ContractId CovidDetection
     choice AlimonyProposalReject :  () with
@@ -152,3 +151,19 @@ template AlimonyProposal with
         internalAffairsEmployeeRole <- fetch internalAffairsEmployeeRoleCid
         assert (internalAffairsEmployeeRole.office == GOInternalAffairs)
         assert (internalAffairsEmployeeRole.officeParty == internalAffairsOffice)
+
+
+test = scenario do
+  superuser <- getParty "superuser"
+  healthOffice <- getParty "healthOffice"
+  borderCtrl <- getParty "borderCtrl"
+  internalAffairsOffice <- getParty "internalAffairsOffice"
+  wellfareOffice <- getParty "wellfareOffice"
+  hls <- getParty "hls"
+  do
+    submit superuser do
+      create AuthorityEmployeeRole with
+        superUser = superuser
+        office = GOHLS
+        officeParty = hls
+        name = "hls employee"
