@@ -1,116 +1,158 @@
 module DemoLayout where
-import DA.Date
+-- import DA.Date
 
 import Authority
+import Citizen
 
 -- *** CovidDetection ***
 template CovidDetection with
     id : Int
     detected : Bool
-    health : Party 
+    healthEmployeeRole : AuthorityEmployeeRole
+    healthEmployeeRoleCid : ContractId AuthorityEmployeeRole
     observers : [Party]
   where
-    signatory health
+    signatory healthEmployeeRole.officeParty
     observer observers
     -- key (health, id)
 
-    -- choice MarkAsHealthy : ContractId CovidDetection with
-    --     healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
-    --   do
-    --     healthRole <- fetch healthDepartmentRoleCid
-    --     assert (healthRole.office == GovOffice Health)
-    --     assert (healthRole.owner == health)
-    --     create  CovidDetection with
-    --       party = party
-    --       detected = False
-    --       health = health
-    --       observers = [hls, borderControl]
+    -- ContractId CovidDetection
+    choice MarkAsHealthy : ContractId CovidDetection with
+        healthEmployeeRoleNewCid : ContractId AuthorityEmployeeRole
+      controller healthEmployeeRole.officeParty
+      do
+        healthEmployeeRoleNew <- fetch healthEmployeeRoleNewCid
+        assert (healthEmployeeRoleNew.office == GOHealth)
+        -- assert (healthEmployeeRole_active == healthEmployeeRole)
+        create this with
+          detected = False
+          healthEmployeeRole = healthEmployeeRoleNew
+          healthEmployeeRoleCid = healthEmployeeRoleNewCid
+    
+    choice AddCovidObservers : ContractId CovidDetection with
+        newObservers : [Party]
+      controller healthEmployeeRole.officeParty
+      do
+        create this with
+          observers = observers ++ newObservers
+
+    choice RemoveCovidObservers : ContractId CovidDetection with
+        newObservers : [Party]
+      controller healthEmployeeRole.officeParty
+      do
+        let
+          fltrd = [x | x <- observers, notElem x  newObservers]
+        create this with
+          observers = fltrd
+
+
           
--- template CovidProposal with
---     id : Number -- "id05660001"
---     health : Party 
---     hls : Party 
---     internalAffairs : Party
---     borderControl : Party
---   where
---     signatory hls
---     observer [health, internalAffairs]
+template CovidProposal with
+    id : Int -- "id05660001"
+    healthOffice : Party 
+    hls : AuthorityEmployeeRole 
+  where
+    signatory hls.officeParty
+    observer healthOffice
 
---     choice CovidProposalAccept : ContractId CovidDetection with
---         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
---         health : Party
---       controller health 
---       do
---         healthRole <- fetch healthDepartmentRoleCid
---         assert (healthRole.office == GovOffice Health)
---         assert (healthRole.owner == health)
-        
---         --assertMsg "bad caller" (controller == getParty Health)
---         create  CovidDetection with
---           party = party
---           detected = True
---           health = health
---           observers = [hls, borderControl]
+    choice CovidProposalAccept : ContractId CovidDetection with
+        healthEmployee : Party
+        healthEmployeeRoleCid : ContractId AuthorityEmployeeRole
+        borderCtrl : Party
+      controller healthEmployee 
+      do
+        healthEmployeeRole <- fetch healthEmployeeRoleCid
+        assert (healthEmployeeRole.office == GOHealth)
+        assert (healthEmployeeRole.officeParty == healthOffice)
+        assert (healthEmployeeRole.employee == healthEmployee)
+        create  CovidDetection with
+          id = id
+          detected = True
+          healthEmployeeRole = healthEmployeeRole
+          healthEmployeeRoleCid = healthEmployeeRoleCid
+          observers = [borderCtrl, healthEmployeeRole.employee]
     
---     choice CovidProposalReject : ContractId CovidDetection with
---         healthDepartmentRoleCid : ContractId AuthorityEmployeeRole
---         health : Party
---       controller health 
---       do
---         healthRole <- fetch healthDepartmentRoleCid
---         assert (healthRole.office == GovOffice Health)
---         assert (healthRole.owner == health)
-        
---         --assertMsg "bad caller" (controller == getParty Health)
---         create  CovidDetection with
---           party = party
---           detected = False
---           health = health
---           observers = [hls, borderControl, internalAffairs]
+    -- ContractId CovidDetection
+    choice CovidProposalReject :  () with
+        healthEmployeeRoleCid : ContractId AuthorityEmployeeRole
+      controller healthOffice
+      do
+        healthEmployeeRole <- fetch healthEmployeeRoleCid
+        assert (healthEmployeeRole.office == GOHealth)
+        assert (healthEmployeeRole.officeParty == healthOffice)
 
+-- *** AlimonyIssues ***
+template AlimonyIssue with
+    id : Int
+    hasIssues : Bool
+    internalAffairsEmployeeRole : AuthorityEmployeeRole
+    internalAffairsEmployeeRoleCid : ContractId AuthorityEmployeeRole
+    observers : [Party]
+  where
+    signatory internalAffairsEmployeeRole.officeParty
+    observer observers
+    -- key (health, id)
 
--- template AlimonyIssue with
---     party : Party
---     hasIssues : Bool
---     internalAffairs : Party 
---   where
---     signatory internalAffairs
-
--- -- *** AlimonyIssue ***
--- template AlimonyIssueProposal with
---     party : Party
---     hasIssues : Bool
---     internalAffairs : Party 
---     wellfare : Party 
---  where
---     signatory internalAffairs, wellfare          
-
---     choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
---       controller internalAffairs 
---       do
---         assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
---         create  AlimonyIssue with
---           party = party
---           hasIssues = hasIssues
---           internalAffairs = internalAffairs
-
--- -- *** Citizen ***
--- template Citizen with
---     citizen : Party -- "id05660001"
---     firstName : Text
---     lastName : Text
---     dob : Date
---     address : Text
---     id : Int
---     internalAffairs : Party 
---   where
---     signatory internalAffairs
+    -- ContractId CovidDetection
+    choice MarkAsNoIssues : ContractId AlimonyIssue with
+        internalAffairsEmployeeRoleNewCid : ContractId AuthorityEmployeeRole
+      controller internalAffairsEmployeeRole.officeParty
+      do
+        internalAffairsEmployeeRoleNew <- fetch internalAffairsEmployeeRoleNewCid
+        assert (internalAffairsEmployeeRoleNew.office == GOInternalAffairs)
+        create this with
+          hasIssues = False
+          internalAffairsEmployeeRole = internalAffairsEmployeeRoleNew
+          internalAffairsEmployeeRoleCid = internalAffairsEmployeeRoleNewCid
     
---     -- choice AlimonyIssueProposalAccept : ContractId AlimonyIssue
---     --   controller internalAffairs 
---     --   do
---     --     assertMsg "bad caller" (internalAffairs == getParty internalAffairs)
---     --     create  AlimonyIssue with
---     --       party = party
---     --       hasIssues = hasIssues
---     --       internalAffairs = internalAffairs
+    choice AddAlimonyObservers : ContractId AlimonyIssue with
+        newObservers : [Party]
+      controller internalAffairsEmployeeRole.officeParty
+      do
+        create this with
+          observers = observers ++ newObservers
+
+    choice RemoveAlimonyObservers : ContractId AlimonyIssue with
+        newObservers : [Party]
+      controller internalAffairsEmployeeRole.officeParty
+      do
+        let
+          fltrd = [x | x <- observers, notElem x  newObservers]
+        create this with
+          observers = fltrd
+
+
+          
+template AlimonyProposal with
+    id : Int -- "id05660001"
+    internalAffairsOffice : Party 
+    hls : AuthorityEmployeeRole 
+  where
+    signatory hls.officeParty
+    observer internalAffairsOffice
+
+    choice AlimonyProposalAccept : ContractId AlimonyIssue with
+        internalAffairsEmployee : Party
+        internalAffairsEmployeeRoleCid : ContractId AuthorityEmployeeRole
+        borderCtrl : Party
+      controller internalAffairsEmployee 
+      do
+        internalAffairsEmployeeRole <- fetch internalAffairsEmployeeRoleCid
+        assert (internalAffairsEmployeeRole.office == GOInternalAffairs)
+        assert (internalAffairsEmployeeRole.officeParty == internalAffairsOffice)
+        assert (internalAffairsEmployeeRole.employee == internalAffairsEmployee)
+        create  AlimonyIssue with
+          id = id
+          hasIssues = True
+          internalAffairsEmployeeRole = internalAffairsEmployeeRole
+          internalAffairsEmployeeRoleCid = internalAffairsEmployeeRoleCid
+          observers = [borderCtrl, internalAffairsEmployeeRole.employee]
+    
+    -- ContractId CovidDetection
+    choice AlimonyProposalReject :  () with
+        internalAffairsEmployeeRoleCid : ContractId AuthorityEmployeeRole
+      controller internalAffairsOffice
+      do
+        internalAffairsEmployeeRole <- fetch internalAffairsEmployeeRoleCid
+        assert (internalAffairsEmployeeRole.office == GOInternalAffairs)
+        assert (internalAffairsEmployeeRole.officeParty == internalAffairsOffice)
