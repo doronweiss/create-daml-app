@@ -5,12 +5,12 @@ module Citizen where
 data CitizenData = CitizenData with 
   firstName : Text
   lastName : Text
-  id : Int
   address : Text
     deriving (Eq, Show)
 
 -- MAIN_TEMPLATE_BEGIN
 template Citizen with
+    id : Int
     persData : CitizenData
     internalAffairsOffice : Party
     wellfareOffice : Party

@@ -2,10 +2,12 @@
 -- SPDX-License-Identifier: Apache-2.0
 
 module User where
+import DA.Text
 
 -- MAIN_TEMPLATE_BEGIN
 template User with
     username: Party
+    name : Text
     following: [Party]
   where
     signatory username
@@ -16,7 +18,7 @@ template User with
     maintainer key
 
     -- FOLLOW_BEGIN
-    nonconsuming choice Follow: ContractId User with
+    nonconsuming choice Follow : ContractId User with
         userToFollow: Party
       controller username
       do
@@ -25,3 +27,24 @@ template User with
         archive self
         create this with following = userToFollow :: following
     -- FOLLOW_END
+
+    nonconsuming choice ChangeName : ContractId User with
+        newName : Text
+      controller username
+      do
+        assertMsg "You cannot follow yourself" (newName /= name)
+        assertMsg "You cannot follow yourself" (newName /= "")
+        archive self
+        create this with 
+          name = newName
+
+test = scenario do
+  alice <- getParty "Alice"
+  do
+    submit alice do
+      cc <- create User with
+        username = alice
+        name = "Yehuda naim"
+        following=[]
+      exercise cc ChangeName with
+        newName = "Doron Weiss"

@@ -2,43 +2,42 @@ module DemoLayout where
 -- import DA.Date
 
 import Authority
-import Citizen
+-- import Citizen
 
 -- *** CovidDetection ***
 template CovidDetection with
     id : Int
     detected : Bool
-    healthEmployeeRole : AuthorityEmployeeRole
-    healthEmployeeRoleCid : ContractId AuthorityEmployeeRole
+    healthEmployeeRoleCID : ContractId AuthorityEmployeeRole
+    healthOffice : Party
     observers : [Party]
   where
-    signatory healthEmployeeRole.officeParty
+    signatory healthOffice
     observer observers
     -- key (health, id)
 
     -- ContractId CovidDetection
     choice MarkAsHealthy : ContractId CovidDetection with
         healthEmployeeRoleNewCid : ContractId AuthorityEmployeeRole
-      controller healthEmployeeRole.officeParty
+      controller healthOffice
       do
         healthEmployeeRoleNew <- fetch healthEmployeeRoleNewCid
         assert (healthEmployeeRoleNew.office == GOHealth)
         -- assert (healthEmployeeRole_active == healthEmployeeRole)
         create this with
           detected = False
-          healthEmployeeRole = healthEmployeeRoleNew
-          healthEmployeeRoleCid = healthEmployeeRoleNewCid
+          healthEmployeeRoleCID = healthEmployeeRoleNewCid
     
     choice AddCovidObservers : ContractId CovidDetection with
         newObservers : [Party]
-      controller healthEmployeeRole.officeParty
+      controller healthOffice
       do
         create this with
           observers = observers ++ newObservers
 
     choice RemoveCovidObservers : ContractId CovidDetection with
         newObservers : [Party]
-      controller healthEmployeeRole.officeParty
+      controller healthOffice
       do
         let
           fltrd = [x | x <- observers, notElem x  newObservers]
@@ -50,27 +49,25 @@ template CovidDetection with
 template CovidProposal with
     id : Int -- "id05660001"
     healthOffice : Party 
-    hls : AuthorityEmployeeRole 
+    hlsOffice : Party 
   where
-    signatory hls.officeParty
+    signatory hlsOffice
     observer healthOffice
 
     choice CovidProposalAccept : ContractId CovidDetection with
-        healthEmployee : Party
         healthEmployeeRoleCid : ContractId AuthorityEmployeeRole
         borderCtrl : Party
-      controller healthEmployee 
+      controller healthOffice 
       do
         healthEmployeeRole <- fetch healthEmployeeRoleCid
         assert (healthEmployeeRole.office == GOHealth)
         assert (healthEmployeeRole.officeParty == healthOffice)
-        assert (healthEmployeeRole.employee == healthEmployee)
         create  CovidDetection with
           id = id
           detected = True
-          healthEmployeeRole = healthEmployeeRole
-          healthEmployeeRoleCid = healthEmployeeRoleCid
-          observers = [borderCtrl, healthEmployeeRole.employee]
+          healthEmployeeRoleCID = healthEmployeeRoleCid
+          healthOffice = healthOffice
+          observers = [borderCtrl, healthEmployeeRole.officeParty]
     
     -- ContractId CovidDetection
     choice CovidProposalReject :  () with
@@ -85,36 +82,35 @@ template CovidProposal with
 template AlimonyIssue with
     id : Int
     hasIssues : Bool
-    internalAffairsEmployeeRole : AuthorityEmployeeRole
     internalAffairsEmployeeRoleCid : ContractId AuthorityEmployeeRole
+    internalAffairsOffice : Party
     observers : [Party]
   where
-    signatory internalAffairsEmployeeRole.officeParty
+    signatory internalAffairsOffice
     observer observers
     -- key (health, id)
 
     -- ContractId CovidDetection
     choice MarkAsNoIssues : ContractId AlimonyIssue with
         internalAffairsEmployeeRoleNewCid : ContractId AuthorityEmployeeRole
-      controller internalAffairsEmployeeRole.officeParty
+      controller internalAffairsOffice
       do
         internalAffairsEmployeeRoleNew <- fetch internalAffairsEmployeeRoleNewCid
         assert (internalAffairsEmployeeRoleNew.office == GOInternalAffairs)
         create this with
           hasIssues = False
-          internalAffairsEmployeeRole = internalAffairsEmployeeRoleNew
           internalAffairsEmployeeRoleCid = internalAffairsEmployeeRoleNewCid
     
     choice AddAlimonyObservers : ContractId AlimonyIssue with
         newObservers : [Party]
-      controller internalAffairsEmployeeRole.officeParty
+      controller internalAffairsOffice
       do
         create this with
           observers = observers ++ newObservers
 
     choice RemoveAlimonyObservers : ContractId AlimonyIssue with
         newObservers : [Party]
-      controller internalAffairsEmployeeRole.officeParty
+      controller internalAffairsOffice
       do
         let
           fltrd = [x | x <- observers, notElem x  newObservers]
@@ -126,9 +122,9 @@ template AlimonyIssue with
 template AlimonyProposal with
     id : Int -- "id05660001"
     internalAffairsOffice : Party 
-    hls : AuthorityEmployeeRole 
+    wellfareOffice : Party
   where
-    signatory hls.officeParty
+    signatory wellfareOffice
     observer internalAffairsOffice
 
     choice AlimonyProposalAccept : ContractId AlimonyIssue with
@@ -144,8 +140,8 @@ template AlimonyProposal with
         create  AlimonyIssue with
           id = id
           hasIssues = True
-          internalAffairsEmployeeRole = internalAffairsEmployeeRole
           internalAffairsEmployeeRoleCid = internalAffairsEmployeeRoleCid
+          internalAffairsOffice = internalAffairsOffice
           observers = [borderCtrl, internalAffairsEmployeeRole.employee]
     
     -- ContractId CovidDetection
