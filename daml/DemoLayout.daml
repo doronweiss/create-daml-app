@@ -59,9 +59,9 @@ template CovidProposal with
         borderCtrl : Party
       controller healthOffice 
       do
-        healthEmployeeRole <- fetch healthEmployeeRoleCid
-        assert (healthEmployeeRole.office == GOHealth)
-        assert (healthEmployeeRole.officeParty == healthOffice)
+        -- healthEmployeeRole <- fetch healthEmployeeRoleCid
+        -- assert (healthEmployeeRole.office == GOHealth)
+        -- assert (healthEmployeeRole.officeParty == healthOffice)
         create  CovidDetection with
           id = id
           detected = True
@@ -159,11 +159,34 @@ test = scenario do
   borderCtrl <- getParty "borderCtrl"
   internalAffairsOffice <- getParty "internalAffairsOffice"
   wellfareOffice <- getParty "wellfareOffice"
-  hls <- getParty "hls"
+  hlsOffice <- getParty "hlsOffice"
   do
-    submit superuser do
+    eHLS <- submit superuser do 
       create AuthorityEmployeeRole with
         superUser = superuser
         office = GOHLS
-        officeParty = hls
+        officeParty = hlsOffice
         name = "hls employee"
+    eHealth <- submit superuser do 
+      create AuthorityEmployeeRole with
+        superUser = superuser
+        office = GOHealth
+        officeParty = healthOffice
+        name = "health employee"
+    eBC <- submit superuser do 
+      create AuthorityEmployeeRole with
+        superUser = superuser
+        office = GOBorderControl
+        officeParty = borderCtrl
+        name = "borderCtrl employee"
+    cvProp <- submit hlsOffice do 
+      create CovidProposal with
+        id=5660001
+        healthOffice = healthOffice
+        hlsOffice = hlsOffice
+    submit healthOffice do
+      exercise cvProp CovidProposalAccept with
+        healthEmployeeRoleCid = eHealth
+        borderCtrl = borderCtrl
+
+

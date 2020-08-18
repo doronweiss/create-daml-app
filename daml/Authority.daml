@@ -1,6 +1,6 @@
 module Authority where
 
-data GovOffice = GOInternalAffairs | GOWellfare | GOHealth | GOHLS | BorderControl
+data GovOffice = GOInternalAffairs | GOWellfare | GOHealth | GOHLS | GOBorderControl
   deriving (Eq, Show, Enum)
 
 -- predefined Parteis: PInternalAffairs PHLS  PWellfare PHealth PBorderControl
