@@ -368,3 +368,4 @@ daml.js/e491352788e56ca4603acc411ffe1a49fefd76ed8b163af86cf5ee5f4c38645b/lib/ind
 daml.js/e491352788e56ca4603acc411ffe1a49fefd76ed8b163af86cf5ee5f4c38645b/src/index.ts
 ui/.env
 ui/src/setupProxy.js
+/daml/Init.dam
