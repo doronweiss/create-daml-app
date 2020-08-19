@@ -23,96 +23,96 @@ initializeFixed  = do
             superUser = superuser
             office = GOHLS
             officeParty = hlsOffice
-            name = "hls employee"
+            name = "משה מהשבכ"
     x <- submit superuser do 
         createCmd AuthorityEmployeeRole with
             superUser = superuser
             office = GOHealth
             officeParty = healthOffice
-            name = "health employee"
+            name = "אדי רופא"
     x <- submit superuser do 
         createCmd AuthorityEmployeeRole with
             superUser = superuser
             office = GOBorderControl
             officeParty = borderCtrl
-            name = "borderCtrl employee"
+            name = "פואד שומר"
     x <- submit superuser do 
         createCmd AuthorityEmployeeRole with
             superUser = superuser
             office = GOInternalAffairs
             officeParty = internalAffairsOffice
-            name = "borderCtrl employee"
+            name = "נחמה פנים"
     x <- submit superuser do 
         createCmd AuthorityEmployeeRole with
             superUser = superuser
             office = GOWellfare
             officeParty = wellfareOffice
-            name = "wellfareOffice employee"
+            name = "זאב רווחה"
     -- create citizens
-    let pdate = CitizenData {firstName = "f0", lastName="l0", address="some address 0"}
+    let pdate = CitizenData {firstName = "אברהם", lastName="אבינו", address="האבות 3 באר שבע"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660000
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f1", lastName="l1", address="some address 1"}
+    let pdate = CitizenData {firstName = "שרה", lastName="אבינו", address="האבות 4 באר שבע"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660001
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f2", lastName="l2", address="some address 2"}
+    let pdate = CitizenData {firstName = "יוסף", lastName="בן-מתיתיהו", address="השדות 935 כפר שמריהו"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660002
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f3", lastName="l3", address="some address 3"}
+    let pdate = CitizenData {firstName = "זאב", lastName="נחמיה", address="סמילנסקי 3 נווה דרדסים"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660003
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f4", lastName="l4", address="some address 4"}
+    let pdate = CitizenData {firstName = "לילה", lastName="טוב", address="בית יצחק, משק 778"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660004
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f5", lastName="l5", address="some address 5"}
+    let pdate = CitizenData {firstName = "אבא", lastName="בלוק", address="קיבוץ יד ראשונים"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660005
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f6", lastName="l6", address="some address 6"}
+    let pdate = CitizenData {firstName = "רפאל", lastName="עוזרי", address="גשמי ברכה 3 נווה מונסון"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660006
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f7", lastName="l7", address="some address 7"}
+    let pdate = CitizenData {firstName = "אביבה", lastName="רפאל", address="מעלה החמישה 666"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660007
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f8", lastName="l8", address="some address 8"}
+    let pdate = CitizenData {firstName = "דריה", lastName="לביקוביץ'", address="דרך המלך 3 מעלה מכמש"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660008
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
-    let pdate = CitizenData {firstName = "f9", lastName="l9", address="some address 9"}
+    let pdate = CitizenData {firstName = "טובה", lastName="מעוד", address="קינג ג'ורג 225 ירושלים"}
     x <- submit internalAffairsOffice do
         createCmd Citizen with
             id = 5660009
