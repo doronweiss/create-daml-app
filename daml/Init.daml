@@ -48,18 +48,75 @@ initialize  = do
             officeParty = wellfareOffice
             name = "wellfareOffice employee"
     -- create citizens
+    let pdate = CitizenData {firstName = "f0", lastName="l0", address="some address 0"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660000
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
     let pdate = CitizenData {firstName = "f1", lastName="l1", address="some address 1"}
-    x <- submit superuser do 
+    x <- submit superuser do
         createCmd Citizen with
             id = 5660001
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
     let pdate = CitizenData {firstName = "f2", lastName="l2", address="some address 2"}
-    x <- submit superuser do 
+    x <- submit superuser do
         createCmd Citizen with
             id = 5660002
             persData = pdate
             internalAffairsOffice = internalAffairsOffice
             observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f3", lastName="l3", address="some address 3"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660003
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f4", lastName="l4", address="some address 4"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660004
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f5", lastName="l5", address="some address 5"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660005
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f6", lastName="l6", address="some address 6"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660006
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f7", lastName="l7", address="some address 7"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660007
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f8", lastName="l8", address="some address 8"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660008
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f9", lastName="l9", address="some address 9"}
+    x <- submit superuser do
+        createCmd Citizen with
+            id = 5660009
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+
     pure ()
