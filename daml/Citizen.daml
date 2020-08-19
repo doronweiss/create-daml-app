@@ -1,4 +1,4 @@
-module Citizen where
+ module Citizen where
 
 -- import Authority
 
@@ -7,6 +7,8 @@ data CitizenData = CitizenData with
   lastName : Text
   address : Text
     deriving (Eq, Show)
+
+type CitizenKey = (Party, Int)
 
 -- MAIN_TEMPLATE_BEGIN
 template Citizen with
@@ -17,3 +19,6 @@ template Citizen with
   where
     signatory internalAffairsOffice
     observer observers
+
+    key (internalAffairsOffice, id)  : CitizenKey
+    maintainer key._1
