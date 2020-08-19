@@ -1,7 +1,9 @@
 module Init where
 
-import Authority
 import Daml.Script 
+
+import Authority
+import Citizen
 
 -- https://blog.knoldus.com/extracting-party-data-from-ledger-in-daml/
 
@@ -14,29 +16,50 @@ initialize  = do
     internalAffairsOffice <- allocatePartyWithHint  "internalAffairsOffice" (PartyIdHint "internalAffairsOffice")
     wellfareOffice <- allocatePartyWithHint  "wellfareOffice" (PartyIdHint "wellfareOffice")
     hlsOffice <- allocatePartyWithHint  "hlsOffice"  (PartyIdHint "hlsOffice")
-    -- careate roles
-    -- x <- submit superuser do 
-    --     create AuthorityEmployeeRole with
-    --         superUser = superuser
-    --         office = GOHLS
-    --         officeParty = hlsOffice
-    --         name = "hls employee"
-    -- x <- submit superuser do 
-    --     create AuthorityEmployeeRole with
-    --         superUser = superuser
-    --         office = GOHealth
-    --         officeParty = healthOffice
-    --         name = "health employee"
-    -- x <- submit superuser do 
-    --     create AuthorityEmployeeRole with
-    --         superUser = superuser
-    --         office = GOBorderControl
-    --         officeParty = borderCtrl
-    --         name = "borderCtrl employee"
-    -- x <- submit superuser do 
-    --     create AuthorityEmployeeRole with
-    --         superUser = superuser
-    --         office = GOInternalAffairs
-    --         officeParty = internalAffairsOffice
-    --         name = "borderCtrl employee"
+    -- create roles
+    x <- submit superuser do 
+        createCmd AuthorityEmployeeRole with
+            superUser = superuser
+            office = GOHLS
+            officeParty = hlsOffice
+            name = "hls employee"
+    x <- submit superuser do 
+        createCmd AuthorityEmployeeRole with
+            superUser = superuser
+            office = GOHealth
+            officeParty = healthOffice
+            name = "health employee"
+    x <- submit superuser do 
+        createCmd AuthorityEmployeeRole with
+            superUser = superuser
+            office = GOBorderControl
+            officeParty = borderCtrl
+            name = "borderCtrl employee"
+    x <- submit superuser do 
+        createCmd AuthorityEmployeeRole with
+            superUser = superuser
+            office = GOInternalAffairs
+            officeParty = internalAffairsOffice
+            name = "borderCtrl employee"
+    x <- submit superuser do 
+        createCmd AuthorityEmployeeRole with
+            superUser = superuser
+            office = GOWellfare
+            officeParty = wellfareOffice
+            name = "wellfareOffice employee"
+    -- create citizens
+    let pdate = CitizenData {firstName = "f1", lastName="l1", address="some address 1"}
+    x <- submit superuser do 
+        createCmd Citizen with
+            id = 5660001
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
+    let pdate = CitizenData {firstName = "f2", lastName="l2", address="some address 2"}
+    x <- submit superuser do 
+        createCmd Citizen with
+            id = 5660002
+            persData = pdate
+            internalAffairsOffice = internalAffairsOffice
+            observers = [wellfareOffice, healthOffice, hlsOffice, borderCtrl]
     pure ()

@@ -13,25 +13,7 @@ template Citizen with
     id : Int
     persData : CitizenData
     internalAffairsOffice : Party
-    wellfareOffice : Party
-    healthOffice: Party
+    observers : [Party]
   where
     signatory internalAffairsOffice
-
-
--- ctTest = scenario do
---   alice <- getParty "Alice"
---   do
---     submit healthOffice do
---       cc <- create Citizen with
---         wellfareOffice = getParty wellfareOffice
---         healthOffice = getParty healthOffice
---         firstName = "משה"
---         lastName = "lastenton"
---         id = 5550001
---         hasCovid = False
---         hasAlimonyIssues = False
---       cc1 <- exercise cc SetCovidState with
---         covidDetected = True
---         caller = hhealthOffice
- 
+    observer observers
